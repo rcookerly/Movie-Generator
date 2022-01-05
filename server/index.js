@@ -1,9 +1,10 @@
 const express = require('express');
 const path = require('path');
+const randomMovieNames = require('random-movie-names');
 const { Movie } = require('./db');
 const { syncAndSeed } = require('./seed');
 
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 const DIST_PATH = path.join(__dirname, '../dist');
 const HTML_PATH = path.join(__dirname, '../src/index.html');
 const PUBLIC_PATH = path.join(__dirname, '../public');
@@ -22,16 +23,60 @@ app.get('/', (req, res) => {
   res.sendFile(HTML_PATH);
 });
 
-// Movies should be sorted on stars in descending order, then by title
 app.get('/api/movies', async(req, res, next) => {
   try {
-    const movies = await Movie.findAll({
-      order: [
-        ['rating', 'DESC'],
-        ['title', 'ASC']
-      ]
-    });
+    const movies = await Movie.findAll();
     res.send(movies);
+  }
+  catch(ex) {
+    console.log(ex);
+    next(ex);
+  }
+});
+
+app.post('/api/movies', async(req, res, next) => {
+  try {
+    res.send(await Movie.create({
+      title: randomMovieNames(),
+      rating: 2 // TODO: Delete after testing
+    }));
+  }
+  catch(ex) {
+    console.log(ex);
+    next(ex);
+  }
+});
+
+/* Example put route
+app.put('/api/contacts/:contactId', async (req, res, next) => {
+  try {
+    const contact = await Contact.findByPk(req.params.contactId);
+    await contact.update(req.body);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+});
+*/
+
+app.put('/api/movies/:id', async (req, res, next) => {
+  try {
+    const movieToUpdate = await Movie.findByPk(req.params.id);
+    await movieToUpdate.update(req.body);
+    res.sendStatus(204);
+    //res.send(movieToUpdate); //<----Kenneth's line of code
+  }
+  catch(ex) {
+    console.log(ex);
+    next(ex);
+  }
+});
+
+app.delete('/api/movies/:id', async(req, res, next) => {
+  try {
+    const movieToDelete = await Movie.findByPk(req.params.id);
+    movieToDelete.destroy();
+    res.sendStatus(204);
   }
   catch(ex) {
     console.log(ex);
@@ -62,8 +107,8 @@ app.use((err, req, res, next) => {
 const init = async() => {
   try {
     await syncAndSeed();
-    app.listen(port, () => {
-      console.log(`Server is listening on port: ${port}`);
+    app.listen(PORT, () => {
+      console.log(`Server is listening on port: ${PORT}`);
     });
   }
   catch(ex) {
