@@ -47,24 +47,11 @@ app.post('/api/movies', async(req, res, next) => {
   }
 });
 
-/* Example put route
-app.put('/api/contacts/:contactId', async (req, res, next) => {
-  try {
-    const contact = await Contact.findByPk(req.params.contactId);
-    await contact.update(req.body);
-    res.sendStatus(204);
-  } catch (err) {
-    next(err);
-  }
-});
-*/
-
 app.put('/api/movies/:id', async (req, res, next) => {
   try {
     const movieToUpdate = await Movie.findByPk(req.params.id);
     await movieToUpdate.update(req.body);
     res.sendStatus(204);
-    //res.send(movieToUpdate); //<----Kenneth's line of code
   }
   catch(ex) {
     console.log(ex);

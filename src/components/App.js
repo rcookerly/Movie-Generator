@@ -91,9 +91,7 @@ class App extends Component {
   };
 
   render() {
-    console.log('render');
     const { movies } = this.state;
-    console.log(movies);
     return (
       <div>
         <div>The average rating is {this.calculateAverageRating(movies)}!</div>

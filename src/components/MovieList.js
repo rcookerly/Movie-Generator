@@ -22,10 +22,16 @@ const MovieList = ({ movies, deleteMovie, incrementRating, decrementRating }) =>
                 <td>{movie.title}</td>
                 <td>{movie.rating}</td>
                 <td>
-                  <button onClick={() => incrementRating(movie)}>+</button>
+                  {movie.rating >= 1 && movie.rating < 5
+                    ? <button onClick={() => incrementRating(movie)}>+</button>
+                    : <button disabled={true}>+</button>
+                  }
                 </td>
                 <td>
-                  <button onClick={() => decrementRating(movie)}>-</button>
+                  {movie.rating > 1
+                    ? <button onClick={() => decrementRating(movie)}>-</button>
+                    : <button disabled={true}>-</button>
+                  }
                 </td>
               </tr>
             )
