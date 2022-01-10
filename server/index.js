@@ -37,8 +37,7 @@ app.get('/api/movies', async(req, res, next) => {
 app.post('/api/movies', async(req, res, next) => {
   try {
     res.send(await Movie.create({
-      title: randomMovieNames(),
-      rating: 2 // TODO: Delete after testing
+      title: randomMovieNames()
     }));
   }
   catch(ex) {

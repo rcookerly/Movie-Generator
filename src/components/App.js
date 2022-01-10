@@ -1,113 +1,60 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { connect } from 'react-redux';
 import MovieList from './MovieList';
+import { fetchMovies, addMovie } from '../redux/store'
 
 class App extends Component {
+  // Todo: Why doesn't this component need a constructor?
+  /*
   constructor() {
     super();
-    this.state = {
-      movies: []
-    };
   };
+  */
 
   async componentDidMount() {
-    try {
-      const { data } = await axios.get('/api/movies');
-      this.setState({
-        movies: data
-      });
-    }
-    catch(ex) {
-      console.log(ex);
-    }
+    this.props.fetchMovies();
   };
 
-  addMovie = async() => {
-    try {
-      const { movies } = this.state;
-      const { data } = await axios.post('/api/movies');
-      this.setState({
-        movies: [...movies, data]
-      });
-    }
-    catch(ex) {
-      console.log(ex);
-    }
-  };
-
-  deleteMovie = async(id) => {
-    try {
-      const { movies } = this.state;
-      await axios.delete(`/api/movies/${id}`);
-      this.setState({
-        movies: movies.filter(movie => {
-          return movie.id !== id;
-        })
-      });
-    }
-    catch(ex) {
-      console.log(ex);
-    }
-  };
-
-  incrementRating = async(movie) => {
-    try {
-      const { movies } = this.state;
-      movie = {...movie, rating: movie.rating + 1};
-      await axios.put(`/api/movies/${movie.id}`, movie).data;
-      this.setState({
-        movies: movies.map((i) => {
-          return movie.id === i.id ? movie : i;
-        })
-      });
-    }
-    catch(ex) {
-      console.log(ex);
-    }
-  };
-
-  decrementRating = async(movie) => {
-    try {
-      const { movies } = this.state;
-      movie = {...movie, rating: movie.rating - 1};
-      await axios.put(`/api/movies/${movie.id}`, movie).data;
-      this.setState({
-        movies: movies.map((i) => {
-          return movie.id === i.id ? movie : i;
-        })
-      });
-    }
-    catch(ex) {
-      console.log(ex);
-    }
-  };
-
-  calculateAverageRating = (movieArr) => {
-    const totalRatings = movieArr.reduce((total, movie) => {
+  calculateAverageRating = () => {
+    const { movies } = this.props;
+    const totalRatings = movies.reduce((total, movie) => {
       total += movie.rating;
       return total;
     }, 0);
-    return movieArr.length ? (totalRatings / movieArr.length).toFixed(2) : 0
+    return (totalRatings / movies.length).toFixed(2);
   };
 
   render() {
-    const { movies } = this.state;
+    const { movies, addMovie } = this.props;
     return (
       <div>
-        <div>The average rating is {this.calculateAverageRating(movies)}!</div>
-        <button onClick={this.addMovie}>Generate Random Movie</button>
-        {movies.length
-          ? <MovieList
-              movies={movies}
-              deleteMovie={this.deleteMovie}
-              incrementRating={this.incrementRating}
-              decrementRating={this.decrementRating}
-            />
-          : <div>There are no movies!</div>
+        {
+          movies.length
+            ? <div>The average rating is {this.calculateAverageRating()}!</div>
+            : null
+        }
+        <button onClick={addMovie}>Generate Random Movie</button>
+        {
+          movies.length
+            ? <MovieList />
+            : <div>There are no movies!</div>
         }
       </div>
     )
   };
 };
 
-export default App;
+const mapStateToProps = ({ movies }) => {
+  // Return an object where the keys are the name of the prop your component wants
+  // Values are the actual parts of the global state your component wants
+  return {
+    movies
+  };
+};
+
+const mapDispatchToProps = { fetchMovies, addMovie };
+
+// Connect takes two arguments
+// 1. What parts of state do you want?
+// 2. What actions do you want to dispatch?
+export default connect(mapStateToProps, mapDispatchToProps)(App);
