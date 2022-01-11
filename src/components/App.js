@@ -4,12 +4,7 @@ import MovieList from './MovieList';
 import { fetchMovies, addMovie } from '../redux/store'
 
 class App extends Component {
-  // Todo: Why doesn't this component need a constructor?
-  /*
-  constructor() {
-    super();
-  };
-  */
+  // Constructor only needed when you need to manage local state or bind functions
 
   async componentDidMount() {
     this.props.fetchMovies();

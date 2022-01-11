@@ -47,6 +47,20 @@ const _decrementRating = (movie) => {
 };
 
 // Thunks
+
+// Q: Is it best practice to handle most logic in thunk or in reducer?
+// A: Anything database related, handle in thunk. Anything state related, handle in reducer.
+
+/* Example of incrementing rating in thunk rather than in reducer
+export const incrementRating = (movie) => {
+  return async (dispatch) => {
+    const item = {...movie, rating: movie.rating + 1};
+    movie = (await axios.put(`/api/movies/${movie.id}`, item)).data;
+    dispatch(_incrementRating(movie));
+  }
+};
+*/
+
 export const fetchMovies = () => {
   return async (dispatch) => {
     const movies = (await axios.get('/api/movies')).data;
@@ -74,17 +88,6 @@ export const incrementRating = (movie) => {
     dispatch(_incrementRating(movie));
   };
 };
-
-// Todo: Would it be best practice to increment rating in thunk or in reducer?
-/*
-export const incrementRating = (movie) => {
-  return async (dispatch) => {
-    const item = {...movie, rating: movie.rating + 1};
-    movie = (await axios.put(`/api/movies/${movie.id}`, item)).data;
-    dispatch(_incrementRating(movie));
-  }
-};
-*/
 
 export const decrementRating = (movie) => {
   return async (dispatch) => {

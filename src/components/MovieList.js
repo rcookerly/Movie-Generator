@@ -2,14 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { deleteMovie, incrementRating, decrementRating } from '../redux/store';
 
-// Todo: Why does this have to be a class component? Functional component doesn't work for some reason
+// This has to be a class unless you use redux hooks
 class MovieList extends Component {
-  // Todo: Why doesn't this component need a constructor?
-  /*
-  constructor() {
-    super();
-  };
-  */
   render() {
     const { movies, deleteMovie, incrementRating, decrementRating } = this.props;
     return (
